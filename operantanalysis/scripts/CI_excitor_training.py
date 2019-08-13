@@ -3,8 +3,7 @@ import pandas as pd
 
 
 column_list = ['Subject', 'tts', 'Condition', 'Day', 'Click Responding', 'Click ITI',
-               'Noise Responding', 'Noise ITI', 'Inhibitor Trial Responding', 'Inhibitor ITI', 'Dippers',
-               'Dippers Retrieved', 'Retrieval Latency']
+               'Noise Responding', 'Noise ITI', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency']
 
 
 def CI_training_function(loaded_file, i):
@@ -17,11 +16,9 @@ def CI_training_function(loaded_file, i):
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
     (A_responding, A_iti) = cue_iti_responding(timecode, eventcode, 'ExcitorATrialStart', 'ExcitorATrialEnd', 'PokeOn1')
     (B_responding, B_iti) = cue_iti_responding(timecode, eventcode, 'ExcitorBTrialStart', 'ExcitorBTrialEnd', 'PokeOn1')
-    (inhibitor_responding, inhibitor_iti) = cue_iti_responding(timecode, eventcode, 'InhibitorTrialStart', 'InhibitorTrialEnd', 'PokeOn1')
 
     df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['tts'], loaded_file['MSN'], int(i + 1), float(A_responding),
-                         float(A_iti), float(B_responding), float(B_iti), float(inhibitor_responding),
-                         float(inhibitor_iti), float(dippers), float(dippers_retrieved),
+                         float(A_iti), float(B_responding), float(B_iti), float(dippers), float(dippers_retrieved),
                          float(retrieval_latency)]], columns=column_list)
 
     return df2
@@ -31,8 +28,8 @@ def CI_training_function(loaded_file, i):
 print(df.to_string())
 df.to_excel("output.xlsx")
 
-group_means = df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding', 'Inhibitor Trial Responding'].mean()
-group_sems = df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding', 'Inhibitor Trial Responding'].sem()
+group_means = df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding'].mean()
+group_sems = df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding'].sem()
 
-print(df.groupby(['Day', 'tts', 'Condition'])['Click Responding', 'Noise Responding', 'Inhibitor Trial Responding'].mean().unstack().to_string())
-print(df.groupby(['Day', 'tts', 'Condition'])['Click Responding', 'Noise Responding', 'Inhibitor Trial Responding'].sem().unstack().to_string())
+print(df.groupby(['Day', 'tts', 'Condition'])['Click Responding', 'Noise Responding'].mean().unstack().to_string())
+print(df.groupby(['Day', 'tts', 'Condition'])['Click Responding', 'Noise Responding'].sem().unstack().to_string())
